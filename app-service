@@ -1,0 +1,33 @@
+#!/bin/bash
+. /lib/lsb/init-functions
+
+export PIDFILE=/app/gunicorn.pid
+export LOGFILE=/app/gunicorn.log
+export DAEMON=gunicorn
+export APPNAME=flask_app
+
+case "$1" in
+  start)
+        log_daemon_msg "Starting deferred execution scheduler" "$APPNAME"
+	      $DAEMON --worker-class eventlet -w 1 --bind 0.0.0.0:8080 chdir src  app:app --pid=$PIDFILE --log-file $LOGFILE
+        log_end_msg $?
+    ;;
+  stop)
+        log_daemon_msg "Stopping deferred execution scheduler" "$APPNAME"
+        killproc -p $PIDFILE $DAEMON
+        log_end_msg $?
+    ;;
+  force-reload|restart)
+    $0 stop
+    $0 start
+    ;;
+  status)
+    status_of_proc -p $PIDFILE $DAEMON && exit 0 || exit $?
+    ;;
+  *)
+    echo "Usage: /etc/init.d/$APPNAME {start|stop|restart|force-reload|status}"
+    exit 1
+    ;;
+esac
+
+exit 0
