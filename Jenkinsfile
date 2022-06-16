@@ -4,8 +4,8 @@ pipeline {
             yaml '''
                 spec:
                   containers:
-                  - name: python3.9
-                    image: python3.9
+                  - name: python3
+                    image: python:3.9
                     command:
                     - sleep
                     args:
@@ -16,7 +16,7 @@ pipeline {
     stages{
         stage('run service and test') {
             steps {
-                container('python3.9') {
+                container('python3') {
                     script {
                         sh """
                             pip install -r requirements.txt
